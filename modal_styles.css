@@ -1,0 +1,723 @@
+/* Pyramid Modal Styles */
+:root {
+    --modal-primary: #5a3010;
+    --modal-secondary: #d4a843;
+    --modal-bg-khufu: linear-gradient(180deg, #fdf4da 0%, #d4a843 100%);
+    --modal-bg-khafre: linear-gradient(180deg, #1a2a4a 0%, #2a5a8a 100%);
+    --modal-bg-menkaure: linear-gradient(180deg, #fdf0e0 0%, #c87a3a 100%);
+}
+
+.pyramid-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    pointer-events: none;
+    visibility: hidden;
+    transition: visibility 1.2s ease;
+}
+
+.pyramid-modal.active {
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(15px);
+    opacity: 0;
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pyramid-modal.active .modal-overlay {
+    opacity: 1;
+}
+
+.modal-content {
+    position: relative;
+    width: 100%;
+    border-radius: 60px 60px 0 0;
+    padding: 80px 60px 40px;
+    box-shadow: 0 -30px 100px rgba(0, 0, 0, 0.5);
+    transform: translateY(100%);
+    transition:
+        transform 1.8s cubic-bezier(0.23, 1, 0.32, 1),
+        background 0.8s ease,
+        opacity 1.5s cubic-bezier(0.23, 1, 0.32, 1),
+        filter 1.5s ease;
+    opacity: 0;
+    overflow-y: auto;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--modal-secondary) transparent;
+    background: #fff;
+    background-image:
+        radial-gradient(circle at 50% 50%, transparent 80%, rgba(0, 0, 0, 0.05) 100%),
+        linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+    perspective: 1000px;
+    user-select: none;
+    cursor: grab;
+}
+
+.modal-content.grabbing {
+    cursor: grabbing;
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--modal-secondary);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.pyramid-modal.active .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+    filter: blur(0);
+}
+
+.modal-content::after {
+    content: "𓉴";
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 3rem;
+    opacity: 0.05;
+    pointer-events: none;
+}
+
+.modal-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.modal-close {
+    position: fixed;
+    top: 40px;
+    right: 50px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 32px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10001;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.modal-close:hover {
+    background: #000;
+    color: #fff;
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Themes ─── */
+.pyramid-modal.theme-khufu .modal-content {
+    background: var(--modal-bg-khufu);
+    border-top: 10px solid #f5e6c8;
+}
+
+.pyramid-modal.theme-khafre .modal-content {
+    background: var(--modal-bg-khafre);
+    border-top: 10px solid #7aaada;
+}
+
+.pyramid-modal.theme-menkaure .modal-content {
+    background: var(--modal-bg-menkaure);
+    border-top: 10px solid #e8c49a;
+}
+
+/* Dashboard Layout Integration */
+.modal-combined-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 40px;
+    padding: 28px;
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 45px;
+    position: relative;
+}
+
+.modal-combined-dashboard::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 1px solid var(--modal-secondary);
+    border-radius: 47px;
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.dashboard-column {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    position: relative;
+    z-index: 5;
+}
+
+.ambient-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.ambient-particles::before {
+    content: "𓉴 𓀀 𓋹 𓅓 𓃠 𓊝 𓆇";
+    position: absolute;
+    width: 200%;
+    font-size: 8rem;
+    color: var(--modal-secondary);
+    opacity: 0.03;
+    top: 50%;
+    left: 0;
+    white-space: nowrap;
+    animation: driftText 60s linear infinite;
+}
+
+@keyframes driftText {
+    from {
+        transform: translateX(0) translateY(-50%) rotate(-5deg);
+    }
+
+    to {
+        transform: translateX(-50%) translateY(-50%) rotate(-5deg);
+    }
+}
+
+/* Info Cards */
+.info-card {
+    background: rgba(255, 255, 255, 0.4);
+    padding: 30px;
+    border-radius: 35px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.6s ease, background 0.4s ease;
+    transform-style: preserve-3d;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.info-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    pointer-events: none;
+}
+
+.info-card h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    letter-spacing: 4px;
+    position: relative;
+    z-index: 2;
+}
+
+.info-card p {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 900;
+    color: #111;
+    margin: 0;
+    line-height: 1.1;
+    position: relative;
+    z-index: 2;
+}
+
+.card-icon {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.1));
+}
+
+.narrative-card p {
+    font-size: 1.25rem !important;
+    line-height: 1.8 !important;
+    font-weight: 500 !important;
+    color: rgba(0, 0, 0, 0.7);
+    text-align: justify;
+}
+
+.coordinate-box {
+    margin-top: 30px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.75rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.coord-label {
+    opacity: 0.5;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+}
+
+.coord-value {
+    color: var(--modal-primary);
+    font-weight: 800;
+}
+
+.status-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff88;
+    animation: blink 1s ease-in-out infinite alternate;
+}
+
+@keyframes blink {
+    from {
+        opacity: 0.3;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.video-card {
+    padding: 0 !important;
+    height: 350px;
+    position: relative;
+    border-radius: 35px;
+    overflow: hidden;
+    margin-top: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: #000;
+}
+
+.video-iframe-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.video-iframe-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
+    padding: 20px 30px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.video-overlay h3 {
+    color: #fff !important;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+
+/* Metrology Table - CUSTOM STYLE */
+.table-card {
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+    animation: borderPulse 4s infinite alternate;
+    height: 98%;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-responsive {
+    flex: 1;
+    display: flex;
+}
+
+@keyframes borderPulse {
+    from {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    to {
+        border-color: var(--modal-secondary);
+    }
+}
+
+.table-card:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    animation-play-state: paused;
+    border-color: var(--modal-secondary);
+}
+
+.metrology-status-bar {
+    margin-bottom: 30px;
+}
+
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--modal-primary);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.progress-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0;
+    background: var(--modal-secondary);
+    box-shadow: 0 0 10px var(--modal-secondary);
+    transition: width 0.3s ease;
+}
+
+.metrology-table {
+    width: 100%;
+    height: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.metrology-table th {
+    text-align: left;
+    padding: 10px 15px;
+    color: var(--modal-secondary);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 800;
+    opacity: 0.8;
+}
+
+.metrology-table tr {
+    transition: all 0.4s ease;
+}
+
+.metrology-table td {
+    padding: 16px 15px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #eee;
+    font-weight: 500;
+    font-size: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+}
+
+.metrology-table td:nth-child(2),
+.metrology-table td:nth-child(3) {
+    font-family: 'Fira Code', monospace;
+    font-weight: 700;
+    color: var(--modal-secondary);
+}
+
+.metrology-table td:first-child {
+    border-radius: 12px 0 0 12px;
+    border-left: 3px solid transparent;
+    color: #fff;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.metrology-table td:last-child {
+    border-radius: 0 12px 12px 0;
+    text-align: right;
+}
+
+.metrology-table tr:hover td {
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+}
+
+.metrology-table tr:hover td:first-child {
+    border-left-color: var(--modal-secondary);
+}
+
+/* Illustration Place */
+.technical-illustration {
+    width: 100%;
+    height: 320px;
+    background: #050507;
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image:
+        radial-gradient(circle at 50% 50%, rgba(197, 160, 89, 0.05) 0%, transparent 70%),
+        linear-gradient(rgba(197, 160, 89, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(197, 160, 89, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 20px 20px, 20px 20px;
+}
+
+.archival-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--modal-accent);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    opacity: 0.6;
+    letter-spacing: 2px;
+}
+
+.archival-placeholder::before {
+    content: "𓉴";
+    font-size: 4rem;
+    margin-bottom: 10px;
+    animation: pulseIcon 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulseIcon {
+    from {
+        transform: scale(0.9);
+        opacity: 0.4;
+    }
+
+    to {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+}
+
+/* Header Text Theme Support */
+#modal-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: clamp(40px, 8vw, 72px);
+    color: #111;
+    margin: 10px 0 20px;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    line-height: 1;
+    background: linear-gradient(90deg, currentColor 0%, var(--modal-secondary) 50%, currentColor 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: shimmerTitle 5s linear infinite;
+}
+
+@keyframes shimmerTitle {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.historical-era {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 5px;
+    opacity: 0.6;
+}
+
+/* Theme specifics for text colors */
+.pyramid-modal.theme-khufu #modal-title,
+.pyramid-modal.theme-khufu .info-card p {
+    color: #5a3010;
+}
+
+.pyramid-modal.theme-khafre #modal-title,
+.pyramid-modal.theme-khafre .info-card p {
+    color: #fff;
+}
+
+.pyramid-modal.theme-khafre .info-card {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.pyramid-modal.theme-khafre .info-card h3 {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.pyramid-modal.theme-khafre .metrology-table td {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.pyramid-modal.theme-khafre .metrology-table td:last-child {
+    color: #fff;
+}
+
+.pyramid-modal.theme-menkaure #modal-title,
+.pyramid-modal.theme-menkaure .info-card p {
+    color: #4a2a0a;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .modal-combined-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        padding: 60px 30px;
+    }
+}
+
+/* Mobile Landscape Enhancements for Nested Modal */
+@media (max-width: 950px) and (max-height: 600px) and (orientation: landscape) {
+    .modal-content {
+        padding: 30px 50px;
+        border-radius: 30px 30px 0 0;
+        mask-image: linear-gradient(to bottom, black calc(100% - 40px), transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 40px), transparent 100%);
+    }
+
+    .pyramid-modal.active .modal-content {
+        transform: translateY(0);
+        transform-origin: bottom center;
+    }
+
+    .modal-close {
+        top: 20px;
+        right: 25px;
+        width: 50px;
+        height: 50px;
+        font-size: 28px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 2px solid var(--modal-secondary);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #modal-title {
+        font-size: clamp(32px, 10vh, 56px);
+        margin-bottom: 10px;
+        margin-top: 5px;
+    }
+
+    .modal-combined-dashboard {
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 30px;
+        margin-top: 20px;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.03);
+    }
+
+    .info-card {
+        padding: 15px;
+    }
+
+    .info-card h3 {
+        margin-bottom: 10px;
+        font-size: 12px;
+    }
+
+    .info-card p {
+        font-size: 20px;
+    }
+
+    .narrative-card p {
+        font-size: 1rem !important;
+        line-height: 1.4 !important;
+    }
+
+    .video-card {
+        height: 200px;
+    }
+
+    .technical-illustration {
+        height: 150px;
+        margin-bottom: 15px;
+    }
+
+    .metrology-status-bar {
+        margin-bottom: 15px;
+    }
+
+    .metrology-table td {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .metrology-table th {
+        padding: 8px 15px;
+        font-size: 10px;
+    }
+
+    .dashboard-column {
+        gap: 20px;
+    }
+}
