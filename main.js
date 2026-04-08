@@ -535,7 +535,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const bgAudio = document.getElementById('bg-audio');
     const prophecySection = document.getElementById('prophecy');
     const prophecyAudio = document.getElementById('prophecy-audio');
+    const chronicleMusic = document.getElementById('chronicle-music');
     const prophecyTranscript = document.getElementById('prophecy-transcript');
+
+    // Helper: smooth-fade chronicle background music
+    function fadeChronicleMusic(targetVol, duration = 1200) {
+        if (!chronicleMusic) return;
+        const startVol = chronicleMusic.volume;
+        const diff = targetVol - startVol;
+        const steps = 30;
+        const stepTime = duration / steps;
+        let step = 0;
+        const interval = setInterval(() => {
+            step++;
+            chronicleMusic.volume = Math.max(0, Math.min(1, startVol + diff * (step / steps)));
+            if (step >= steps) {
+                clearInterval(interval);
+                if (targetVol === 0) chronicleMusic.pause();
+            }
+        }, stepTime);
+    }
 
     const prophecyScript = [
         { text: "I have watched… before your time had a name.<br>Before memory… before history… before you." },
@@ -609,6 +628,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (hudStatus) hudStatus.textContent = "DECRYPTED";
             if (progressBar) progressBar.style.width = '100%';
+            // Stop background music when chronicle finishes
+            if (chronicleMusic) chronicleMusic.pause();
             return;
         }
 
@@ -655,6 +676,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const pObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 isProphecyMode = entry.isIntersecting;
+
+                // Stop music when user scrolls away from the section
+                if (!entry.isIntersecting) {
+                    if (chronicleMusic) chronicleMusic.pause();
+                }
+                // (Music starts on first user click, not here — avoids autoplay block)
+
                 if (hasProphecyPlayed) return;
 
                 if (isProphecyMode) {
@@ -697,14 +725,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     await initSerial();
                 }
                 sendSerialCommand('G');
+
+                // Start background music immediately at full volume
+                if (chronicleMusic) {
+                    chronicleMusic.volume = 1.0;
+                    chronicleMusic.play().catch(() => { });
+                }
+
+                // Pause main ambient audio to prioritize chronicle music
+                if (bgAudio) bgAudio.pause();
+
+                // Set narration volume lower to let music shine
+                if (prophecyAudio) prophecyAudio.volume = 0.25;
+
                 playNarratorSequence(0);
             } else {
                 if (prophecyAudio.paused) {
+                    if (prophecyAudio) prophecyAudio.volume = 0.25;
                     prophecyAudio.play();
+                    if (chronicleMusic) {
+                        chronicleMusic.volume = 1.0;
+                        chronicleMusic.play().catch(() => { });
+                    }
                     audioBtn.textContent = "PAUSING DECRYPTION";
                     audioBtn.classList.add('audio-active');
                 } else {
                     prophecyAudio.pause();
+                    if (chronicleMusic) chronicleMusic.pause();
                     audioBtn.textContent = "RESUME DECRYPTION";
                     audioBtn.classList.remove('audio-active');
                 }
